@@ -1,6 +1,6 @@
 from flask import Flask
 from flask_restplus import Api,Resource,fields
-import json
+
 
 app = Flask(__name__)
 api = Api(app)
@@ -81,11 +81,14 @@ class UpdateRadioStation(Resource):
 # All Stations
 def allStations():
     global cur
-    sql = "SELECT * FROM radio LIMIT 1"
-    print cur.execute(sql).fetchall()
+    sql = "SELECT * FROM radio"
+    return cur.execute(sql).fetchall()
 
-allStations()
+@api.route('/ShowAll')
+class ShowAll(Resource):
+    def get(self):
+        return allStations()
 
-if __name__ == '__main__':
-    app.run(debug=True)
+# if __name__ == '__main__':
+#     app.run(debug=True)
 
