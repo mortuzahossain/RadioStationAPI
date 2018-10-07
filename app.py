@@ -53,10 +53,11 @@ def updateStation(_id,name,image,url):
     global cur,con
     sql = "UPDATE radio SET station = '%s',img = '%s',url = '%s' WHERE id = %d"%(name,image,url,_id)
     cur.execute(sql)
-    if(con.commit()):
-        return False
-    else:
+    try:
+        con.commit()
         return True
+    except:
+        return False
 
 stationDetails = api.model('StationDetails',
     {
