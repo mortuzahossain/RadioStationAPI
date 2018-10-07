@@ -33,6 +33,20 @@ class Language(Resource):
         return findCounrty(api.payload['countryName'])
 
 
+# Geting Countries radio station list
+
+def getStation(countryName):
+    global cur
+    searchStr = "SELECT id,station,img,url FROM radio WHERE countryname = '%s'" % countryName
+    return cur.execute(searchStr).fetchall()
+
+@api.route('/RadioStation')
+class RadioStation(Resource):
+    @api.expect(country)
+    def post(self):
+        countryName = api.payload['countryName']
+        return getStation(countryName)
+
 
 
 if __name__ == '__main__':
