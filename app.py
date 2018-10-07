@@ -24,7 +24,7 @@ def findCounrty(countryName):
 
 country = api.model('Country',{'countryName':fields.String('Provide Country Name To Search For')})
 @api.route('/SearchCountry')
-class Language(Resource):
+class SearchCountry(Resource):
     def get(self):
         return counrtyAvailable()
     
@@ -40,7 +40,7 @@ def getStation(countryName):
     searchStr = "SELECT id,station,img,url FROM radio WHERE countryname = '%s'" % countryName
     return cur.execute(searchStr).fetchall()
 
-@api.route('/RadioStation')
+@api.route('/RadioStations')
 class RadioStation(Resource):
     @api.expect(country)
     def post(self):
@@ -48,6 +48,42 @@ class RadioStation(Resource):
         return getStation(countryName)
 
 
+# Update Radio Station
+def updateStation(_id,name,image,url):
+    global cur,con
+    sql = "UPDATE radio SET station = '%s',img = '%s',url = '%s' WHERE id = %d"%(name,image,url,_id)
+    cur.execute(sql)
+    if(con.commit()):
+        return False
+    else:
+        return True
+
+stationDetails = api.model('StationDetails',
+    {
+        'id':fields.Integer('ID'),
+        'stationName':fields.String('Provide Station Name'),
+        'imageURL':fields.String('Thumbnail Image URL'),
+        'streamURL':fields.String('Valid Stream URL')
+    })
+@api.route('/UpdateRadioStation')
+class UpdateRadioStation(Resource):
+    @api.expect(stationDetails)
+    def post(self):
+        _id = api.payload['id']
+        _stationName = api.payload['stationName']
+        _imageURL = api.payload['imageURL']
+        _streamURL = api.payload['streamURL']
+
+        return updateStation(_id,_stationName,_imageURL,_streamURL)
+
+
+# All Stations
+def allStations():
+    global cur
+    sql = "SELECT * FROM radio LIMIT 1"
+    print cur.execute(sql).fetchall()
+
+allStations()
 
 if __name__ == '__main__':
     app.run(debug=True)
